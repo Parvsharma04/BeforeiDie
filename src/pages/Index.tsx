@@ -9,14 +9,14 @@ const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
+  const handleGetStarted = () => {
+    setIsAuthenticated(true);
+  };
+
   // For demo purposes, we'll show the landing page first
   // In a real app, this would check actual authentication state
   if (!isAuthenticated) {
-    return (
-      <div onClick={() => setIsAuthenticated(true)} className="cursor-pointer">
-        <LandingPage />
-      </div>
-    );
+    return <LandingPage onGetStarted={handleGetStarted} />;
   }
 
   return (

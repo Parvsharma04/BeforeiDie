@@ -4,11 +4,13 @@ import { Search, Filter, TrendingUp, Shuffle, Heart, Users, Star } from 'lucide-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 import Header from '../components/Header';
 
 const Discovery = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const { toast } = useToast();
 
   const categories = [
     { key: 'all', label: 'All', icon: '🌟' },
@@ -54,7 +56,9 @@ const Discovery = () => {
       category: "Adventure",
       image: "🌅",
       likes: 1234,
-      savedBy: 892
+      savedBy: 892,
+      isLiked: false,
+      isSaved: false
     },
     {
       id: 2,
@@ -62,7 +66,9 @@ const Discovery = () => {
       category: "Food",
       image: "🍝",
       likes: 967,
-      savedBy: 543
+      savedBy: 543,
+      isLiked: false,
+      isSaved: false
     },
     {
       id: 3,
@@ -70,7 +76,9 @@ const Discovery = () => {
       category: "Creative",
       image: "✍️",
       likes: 743,
-      savedBy: 421
+      savedBy: 421,
+      isLiked: false,
+      isSaved: false
     },
     {
       id: 4,
@@ -78,7 +86,9 @@ const Discovery = () => {
       category: "Service",
       image: "🐕",
       likes: 1098,
-      savedBy: 667
+      savedBy: 667,
+      isLiked: false,
+      isSaved: false
     },
     {
       id: 5,
@@ -86,7 +96,9 @@ const Discovery = () => {
       category: "Learning",
       image: "🎸",
       likes: 1456,
-      savedBy: 789
+      savedBy: 789,
+      isLiked: false,
+      isSaved: false
     },
     {
       id: 6,
@@ -94,9 +106,80 @@ const Discovery = () => {
       category: "Adventure",
       image: "🪂",
       likes: 2134,
-      savedBy: 1203
+      savedBy: 1203,
+      isLiked: false,
+      isSaved: false
     }
   ];
+
+  const [inspirationState, setInspirationState] = useState(inspirationGoals);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    console.log('Searching for:', e.target.value);
+  };
+
+  const handleFilter = () => {
+    console.log('Opening filters...');
+    toast({
+      title: "Filters",
+      description: "Filter options will be available soon!",
+    });
+  };
+
+  const handleSurpriseMe = () => {
+    console.log('Surprise me clicked!');
+    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+    setActiveCategory(randomCategory.key);
+    toast({
+      title: "Surprise! 🎉",
+      description: `Showing ${randomCategory.label} category ideas!`,
+    });
+  };
+
+  const handleAddToList = (goalTitle: string) => {
+    console.log('Adding to list:', goalTitle);
+    toast({
+      title: "Added to List! ✅",
+      description: `"${goalTitle}" has been added to your bucket list.`,
+    });
+  };
+
+  const handleLike = (goalId: number) => {
+    setIns inspirationState(prev => 
+      prev.map(goal => 
+        goal.id === goalId 
+          ? { 
+              ...goal, 
+              isLiked: !goal.isLiked,
+              likes: goal.isLiked ? goal.likes - 1 : goal.likes + 1
+            }
+          : goal
+      )
+    );
+  };
+
+  const handleSave = (goalId: number, goalTitle: string) => {
+    setInspirationState(prev => 
+      prev.map(goal => 
+        goal.id === goalId 
+          ? { 
+              ...goal, 
+              isSaved: !goal.isSaved,
+              savedBy: goal.isSaved ? goal.savedBy - 1 : goal.savedBy + 1
+            }
+          : goal
+      )
+    );
+    
+    const goal = inspirationState.find(g => g.id === goalId);
+    if (goal && !goal.isSaved) {
+      toast({
+        title: "Saved! ⭐",
+        description: `"${goalTitle}" has been saved to your favorites.`,
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
@@ -116,15 +199,22 @@ const Discovery = () => {
             <Input
               placeholder="Search for bucket list ideas..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleSearch}
               className="pl-10 bg-white/70 backdrop-blur-sm border-0 shadow-md"
             />
           </div>
-          <Button variant="outline" className="bg-white/70 backdrop-blur-sm border-0 shadow-md">
+          <Button 
+            variant="outline" 
+            className="bg-white/70 backdrop-blur-sm border-0 shadow-md"
+            onClick={handleFilter}
+          >
             <Filter className="h-4 w-4 mr-2" />
             Filters
           </Button>
-          <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+          <Button 
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+            onClick={handleSurpriseMe}
+          >
             <Shuffle className="h-4 w-4 mr-2" />
             Surprise Me
           </Button>
@@ -169,7 +259,7 @@ const Discovery = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600 text-sm mb-4">{goal.description}</p>
-                  <div className="flex items-center justify-between text-sm text-gray-500">
+                  <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                     <div className="flex items-center">
                       <Users className="h-4 w-4 mr-1" />
                       {goal.participants.toLocaleString()}
@@ -179,7 +269,10 @@ const Discovery = () => {
                       {goal.popularity}%
                     </div>
                   </div>
-                  <Button className="w-full mt-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+                  <Button 
+                    className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                    onClick={() => handleAddToList(goal.title)}
+                  >
                     Add to List
                   </Button>
                 </CardContent>
@@ -192,11 +285,13 @@ const Discovery = () => {
         <section>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900">Popular Ideas</h2>
-            <Button variant="ghost">View All</Button>
+            <Button variant="ghost" onClick={() => console.log('View all clicked')}>
+              View All
+            </Button>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {inspirationGoals.map((goal) => (
+            {inspirationState.map((goal) => (
               <Card key={goal.id} className="bg-white/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
                 <CardContent className="p-6">
                   <div className="text-center mb-4">
@@ -209,22 +304,32 @@ const Discovery = () => {
                   
                   <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                     <div className="flex items-center">
-                      <Heart className="h-4 w-4 mr-1 text-red-500" />
+                      <Heart className={`h-4 w-4 mr-1 ${goal.isLiked ? 'text-red-500 fill-current' : 'text-red-500'}`} />
                       {goal.likes}
                     </div>
                     <div className="flex items-center">
-                      <Star className="h-4 w-4 mr-1 text-yellow-500" />
+                      <Star className={`h-4 w-4 mr-1 ${goal.isSaved ? 'text-yellow-500 fill-current' : 'text-yellow-500'}`} />
                       {goal.savedBy}
                     </div>
                   </div>
                   
                   <div className="flex space-x-2">
-                    <Button size="sm" variant="outline" className="flex-1">
-                      <Heart className="h-4 w-4 mr-1" />
-                      Like
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => handleLike(goal.id)}
+                    >
+                      <Heart className={`h-4 w-4 mr-1 ${goal.isLiked ? 'fill-current' : ''}`} />
+                      {goal.isLiked ? 'Liked' : 'Like'}
                     </Button>
-                    <Button size="sm" className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-                      Add to List
+                    <Button 
+                      size="sm" 
+                      className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                      onClick={() => handleSave(goal.id, goal.title)}
+                    >
+                      <Star className={`h-4 w-4 mr-1 ${goal.isSaved ? 'fill-current' : ''}`} />
+                      {goal.isSaved ? 'Saved' : 'Save'}
                     </Button>
                   </div>
                 </CardContent>

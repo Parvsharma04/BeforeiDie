@@ -2,13 +2,28 @@
 import React from 'react';
 import { Plus, Bell, Users, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isActive = (path: string) => {
     return location.pathname === path;
+  };
+
+  const handleNewList = () => {
+    // For now, navigate to lists page - in a real app this would open a modal
+    navigate('/lists');
+  };
+
+  const handleNotifications = () => {
+    console.log('Notifications clicked');
+    // In a real app, this would open notifications dropdown
+  };
+
+  const handleFriendsAction = () => {
+    navigate('/friends');
   };
 
   return (
@@ -92,14 +107,17 @@ const Header = () => {
           </div>
 
           <div className="flex items-center space-x-3">
-            <Button variant="ghost" size="sm" className="relative">
+            <Button variant="ghost" size="sm" className="relative" onClick={handleNotifications}>
               <Bell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full text-xs"></span>
             </Button>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={handleFriendsAction}>
               <Users className="h-5 w-5" />
             </Button>
-            <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
+            <Button 
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+              onClick={handleNewList}
+            >
               <Plus className="h-4 w-4 mr-2" />
               New List
             </Button>

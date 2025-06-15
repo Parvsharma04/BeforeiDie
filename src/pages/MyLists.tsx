@@ -4,10 +4,12 @@ import { Plus, Users, Lock, Calendar, MoreVertical, ArrowRight } from 'lucide-re
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
 const MyLists = () => {
   const [filter, setFilter] = useState('all');
+  const navigate = useNavigate();
 
   const bucketLists = [
     {
@@ -70,6 +72,21 @@ const MyLists = () => {
     return true;
   });
 
+  const handleCreateNewList = () => {
+    console.log('Creating new list...');
+    // In a real app, this would open a modal or navigate to creation page
+  };
+
+  const handleListClick = (listId: number) => {
+    navigate(`/lists/${listId}`);
+  };
+
+  const handleListOptions = (e: React.MouseEvent, listId: number) => {
+    e.stopPropagation();
+    console.log('List options for:', listId);
+    // In a real app, this would open a dropdown menu
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
       <Header />
@@ -80,7 +97,10 @@ const MyLists = () => {
             <h1 className="text-4xl font-bold text-gray-900 mb-2">My Bucket Lists</h1>
             <p className="text-gray-600">Manage your dreams and adventures</p>
           </div>
-          <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+          <Button 
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+            onClick={handleCreateNewList}
+          >
             <Plus className="h-4 w-4 mr-2" />
             Create New List
           </Button>
@@ -110,7 +130,11 @@ const MyLists = () => {
         {/* Lists Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredLists.map((list) => (
-            <Card key={list.id} className="bg-white/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
+            <Card 
+              key={list.id} 
+              className="bg-white/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+              onClick={() => handleListClick(list.id)}
+            >
               <CardHeader className="pb-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -120,7 +144,11 @@ const MyLists = () => {
                     <p className="text-sm text-gray-600 mb-3">{list.description}</p>
                     <span className="text-xs text-gray-500">Updated {list.lastUpdated}</span>
                   </div>
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={(e) => handleListOptions(e, list.id)}
+                  >
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </div>
@@ -177,7 +205,10 @@ const MyLists = () => {
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No lists found</h3>
             <p className="text-gray-600 mb-4">Create your first bucket list to get started!</p>
-            <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+            <Button 
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+              onClick={handleCreateNewList}
+            >
               <Plus className="h-4 w-4 mr-2" />
               Create List
             </Button>

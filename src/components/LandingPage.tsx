@@ -5,8 +5,40 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 
-const LandingPage = () => {
+interface LandingPageProps {
+  onGetStarted: () => void;
+}
+
+const LandingPage = ({ onGetStarted }: LandingPageProps) => {
   const [isLogin, setIsLogin] = useState(true);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: ''
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Form submitted:', formData);
+    onGetStarted();
+  };
+
+  const handleSocialAuth = (provider: string) => {
+    console.log(`${provider} auth clicked`);
+    onGetStarted();
+  };
+
+  const handleWatchDemo = () => {
+    console.log('Watch demo clicked');
+    // In a real app, this would open a demo video
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-blue-600 relative overflow-hidden">
@@ -43,11 +75,20 @@ const LandingPage = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Button size="lg" className="bg-white text-purple-700 hover:bg-gray-100 font-semibold px-8">
+              <Button 
+                size="lg" 
+                className="bg-white text-purple-700 hover:bg-gray-100 font-semibold px-8"
+                onClick={onGetStarted}
+              >
                 Get Started Free
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 font-semibold px-8">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-white text-white hover:bg-white/10 font-semibold px-8"
+                onClick={handleWatchDemo}
+              >
                 Watch Demo
               </Button>
             </div>
@@ -99,12 +140,15 @@ const LandingPage = () => {
                   </p>
                 </div>
 
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={handleSubmit}>
                   {!isLogin && (
                     <div>
                       <Input 
                         type="text" 
+                        name="name"
                         placeholder="Full Name"
+                        value={formData.name}
+                        onChange={handleInputChange}
                         className="bg-white/10 border-white/20 text-white placeholder:text-purple-200 focus:border-white/40"
                       />
                     </div>
@@ -113,7 +157,10 @@ const LandingPage = () => {
                   <div>
                     <Input 
                       type="email" 
+                      name="email"
                       placeholder="Email"
+                      value={formData.email}
+                      onChange={handleInputChange}
                       className="bg-white/10 border-white/20 text-white placeholder:text-purple-200 focus:border-white/40"
                     />
                   </div>
@@ -121,7 +168,10 @@ const LandingPage = () => {
                   <div>
                     <Input 
                       type="password" 
+                      name="password"
                       placeholder="Password"
+                      value={formData.password}
+                      onChange={handleInputChange}
                       className="bg-white/10 border-white/20 text-white placeholder:text-purple-200 focus:border-white/40"
                     />
                   </div>
@@ -148,10 +198,20 @@ const LandingPage = () => {
 
                 <div className="mt-8 pt-6 border-t border-white/20">
                   <div className="grid grid-cols-2 gap-4">
-                    <Button variant="outline" className="border-white/20 text-white hover:bg-white/10">
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      className="border-white/20 text-white hover:bg-white/10"
+                      onClick={() => handleSocialAuth('Google')}
+                    >
                       Google
                     </Button>
-                    <Button variant="outline" className="border-white/20 text-white hover:bg-white/10">
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      className="border-white/20 text-white hover:bg-white/10"
+                      onClick={() => handleSocialAuth('Facebook')}
+                    >
                       Facebook
                     </Button>
                   </div>
