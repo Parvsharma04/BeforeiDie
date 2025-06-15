@@ -1,13 +1,15 @@
-
 import React, { useState } from 'react';
 import { UserPlus, Search, Users, Trophy, Calendar, MessageCircle, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 import Header from '../components/Header';
 
 const Friends = () => {
   const [activeTab, setActiveTab] = useState('friends');
+  const [searchQuery, setSearchQuery] = useState('');
+  const { toast } = useToast();
 
   const friends = [
     {
@@ -110,6 +112,67 @@ const Friends = () => {
     }
   ];
 
+  const handleAddFriends = () => {
+    console.log('Add friends clicked');
+    toast({
+      title: "Add Friends",
+      description: "Friend invitation feature coming soon!",
+    });
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    console.log('Searching friends:', e.target.value);
+  };
+
+  const handleMessage = (friendName: string) => {
+    console.log('Message friend:', friendName);
+    toast({
+      title: "Message Sent! 💬",
+      description: `Opening chat with ${friendName}...`,
+    });
+  };
+
+  const handleViewLists = (friendName: string) => {
+    console.log('View lists for:', friendName);
+    toast({
+      title: "View Lists",
+      description: `Viewing ${friendName}'s bucket lists...`,
+    });
+  };
+
+  const handleAcceptInvitation = (from: string, listName: string) => {
+    console.log('Accept invitation from:', from);
+    toast({
+      title: "Invitation Accepted! ✅",
+      description: `You've joined "${listName}" with ${from}!`,
+    });
+  };
+
+  const handleDeclineInvitation = (from: string) => {
+    console.log('Decline invitation from:', from);
+    toast({
+      title: "Invitation Declined",
+      description: `Declined invitation from ${from}.`,
+    });
+  };
+
+  const handleViewDetails = (listTitle: string) => {
+    console.log('View details for:', listTitle);
+    toast({
+      title: "View Details",
+      description: `Opening details for "${listTitle}"...`,
+    });
+  };
+
+  const handleCelebrate = (friend: string, achievement: string) => {
+    console.log('Celebrate achievement:', achievement, 'for', friend);
+    toast({
+      title: "Celebration Sent! 🎉",
+      description: `Congratulated ${friend} on "${achievement}"!`,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
       <Header />
@@ -121,7 +184,10 @@ const Friends = () => {
             <h1 className="text-4xl font-bold text-gray-900 mb-2">Friends & Social</h1>
             <p className="text-gray-600">Connect with friends and share your journey</p>
           </div>
-          <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+          <Button 
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+            onClick={handleAddFriends}
+          >
             <UserPlus className="h-4 w-4 mr-2" />
             Add Friends
           </Button>
@@ -132,6 +198,8 @@ const Friends = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
           <Input
             placeholder="Search friends or find new people..."
+            value={searchQuery}
+            onChange={handleSearch}
             className="pl-10 bg-white/70 backdrop-blur-sm border-0 shadow-md"
           />
         </div>
@@ -196,11 +264,20 @@ const Friends = () => {
                   </div>
 
                   <div className="flex space-x-2">
-                    <Button size="sm" variant="outline" className="flex-1">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => handleMessage(friend.name)}
+                    >
                       <MessageCircle className="h-4 w-4 mr-1" />
                       Message
                     </Button>
-                    <Button size="sm" className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+                    <Button 
+                      size="sm" 
+                      className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                      onClick={() => handleViewLists(friend.name)}
+                    >
                       View Lists
                     </Button>
                   </div>
@@ -230,8 +307,18 @@ const Friends = () => {
                       </div>
                     </div>
                     <div className="flex space-x-2">
-                      <Button size="sm" variant="outline">Decline</Button>
-                      <Button size="sm" className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleDeclineInvitation(invitation.from)}
+                      >
+                        Decline
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600"
+                        onClick={() => handleAcceptInvitation(invitation.from, invitation.listName)}
+                      >
                         Accept
                       </Button>
                     </div>
@@ -281,7 +368,11 @@ const Friends = () => {
                         <Gift className="h-4 w-4 text-red-500" />
                         <span className="text-sm text-gray-600">{list.likes} likes</span>
                       </div>
-                      <Button size="sm" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+                      <Button 
+                        size="sm" 
+                        className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                        onClick={() => handleViewDetails(list.title)}
+                      >
                         View Details
                       </Button>
                     </div>
@@ -309,7 +400,11 @@ const Friends = () => {
                       <p className="text-sm text-gray-600 mb-1">{achievement.description}</p>
                       <p className="text-xs text-gray-400">{achievement.timeAgo}</p>
                     </div>
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => handleCelebrate(achievement.friend, achievement.achievement)}
+                    >
                       <Trophy className="h-4 w-4 mr-1" />
                       Celebrate
                     </Button>
