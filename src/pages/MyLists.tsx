@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Plus, Search, Filter, MoreVertical, Users, Calendar, MapPin, Trophy, Target, Edit, Trash2, Share2, Eye } from 'lucide-react';
+import { Plus, Search, Filter, MoreVertical, Users, Calendar, Target, Edit, Trash2, Share2, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,10 +13,7 @@ const MyLists = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const { toast } = useToast();
-  const navigate = useNavigate();
-
-  const bucketLists = [
+  const [bucketLists, setBucketLists] = useState([
     {
       id: 1,
       emoji: "✈️",
@@ -64,15 +62,28 @@ const MyLists = () => {
       tags: ["art", "design"],
       collaborators: 3,
     },
-  ];
+  ]);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleCreateNew = () => {
-    console.log('Create new list clicked');
     setIsCreateModalOpen(true);
   };
 
   const handleCreateSuccess = (newList: any) => {
-    console.log('New list created:', newList);
+    const listWithDefaults = {
+      ...newList,
+      id: Date.now(),
+      title: newList.name,
+      completed: 0,
+      total: 0,
+      lastUpdated: "Just now",
+      progress: 0,
+      color: "bg-gradient-to-r from-purple-500 to-pink-500",
+      tags: [newList.category || "general"],
+      collaborators: 0,
+    };
+    setBucketLists(prev => [listWithDefaults, ...prev]);
     setIsCreateModalOpen(false);
     toast({
       title: "Success! 🎉",
@@ -80,47 +91,12 @@ const MyLists = () => {
     });
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    console.log('Searching lists:', e.target.value);
-  };
-
-  const handleFilter = () => {
-    console.log('Filter clicked');
-    toast({
-      title: "Filters",
-      description: "Filter options coming soon!",
-    });
-  };
-
   const handleViewList = (listId: number, listTitle: string) => {
-    console.log('View list:', listId);
     navigate(`/lists/${listId}`);
-    toast({
-      title: "Opening List",
-      description: `Loading "${listTitle}"...`,
-    });
   };
 
-  const handleEditList = (listId: number, listTitle: string) => {
-    console.log('Edit list:', listId);
-    toast({
-      title: "Edit List",
-      description: `Editing "${listTitle}"...`,
-    });
-  };
-
-  const handleShareList = (listTitle: string) => {
-    console.log('Share list:', listTitle);
-    navigator.clipboard.writeText(`Check out my bucket list: ${listTitle}!`);
-    toast({
-      title: "Share Link Copied! 🔗",
-      description: `Share link for "${listTitle}" copied to clipboard.`,
-    });
-  };
-
-  const handleDeleteList = (listTitle: string) => {
-    console.log('Delete list:', listTitle);
+  const handleDeleteList = (listId: number, listTitle: string) => {
+    setBucketLists(prev => prev.filter(list => list.id !== listId));
     toast({
       title: "List Deleted",
       description: `"${listTitle}" has been deleted.`,
@@ -128,13 +104,19 @@ const MyLists = () => {
     });
   };
 
-  const handleAddGoal = (listTitle: string) => {
-    console.log('Add goal to:', listTitle);
+  const handleAddGoal = (listId: number, listTitle: string) => {
+    navigate(`/lists/${listId}`);
     toast({
-      title: "Add Goal",
-      description: `Adding new goal to "${listTitle}"...`,
+      title: "Opening List",
+      description: `Adding goals to "${listTitle}"...`,
     });
   };
+
+  const filteredLists = bucketLists.filter(list => {
+    const matchesSearch = list.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFilter = activeFilter === 'all' || list.tags.includes(activeFilter);
+    return matchesSearch && matchesFilter;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
@@ -163,57 +145,32 @@ const MyLists = () => {
             <Input
               placeholder="Search your lists..."
               value={searchQuery}
-              onChange={handleSearch}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 bg-white/70 backdrop-blur-sm border-0 shadow-md"
             />
           </div>
-          <Button 
-            variant="outline" 
-            className="bg-white/70 backdrop-blur-sm border-0 shadow-md"
-            onClick={handleFilter}
-          >
-            <Filter className="h-4 w-4 mr-2" />
-            Filter
-          </Button>
         </div>
 
         {/* Filter Tabs */}
         <div className="flex space-x-2 mb-8">
-          <button
-            onClick={() => setActiveFilter('all')}
-            className={`px-4 py-2 rounded-full transition-all duration-200 ${
-              activeFilter === 'all'
-                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
-                : 'bg-white/70 backdrop-blur-sm text-gray-600 hover:text-gray-900 hover:bg-white/90'
-            }`}
-          >
-            All
-          </button>
-          <button
-            onClick={() => setActiveFilter('travel')}
-            className={`px-4 py-2 rounded-full transition-all duration-200 ${
-              activeFilter === 'travel'
-                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
-                : 'bg-white/70 backdrop-blur-sm text-gray-600 hover:text-gray-900 hover:bg-white/90'
-            }`}
-          >
-            Travel
-          </button>
-          <button
-            onClick={() => setActiveFilter('learning')}
-            className={`px-4 py-2 rounded-full transition-all duration-200 ${
-              activeFilter === 'learning'
-                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
-                : 'bg-white/70 backdrop-blur-sm text-gray-600 hover:text-gray-900 hover:bg-white/90'
-            }`}
-          >
-            Learning
-          </button>
+          {['all', 'travel', 'learning', 'health'].map((filter) => (
+            <button
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+              className={`px-4 py-2 rounded-full transition-all duration-200 capitalize ${
+                activeFilter === filter
+                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
+                  : 'bg-white/70 backdrop-blur-sm text-gray-600 hover:text-gray-900 hover:bg-white/90'
+              }`}
+            >
+              {filter}
+            </button>
+          ))}
         </div>
 
         {/* Lists Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {bucketLists.map((list) => (
+          {filteredLists.map((list) => (
             <Card key={list.id} className="bg-white/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
               <CardHeader className="pb-4">
                 <div className="flex items-start justify-between">
@@ -233,9 +190,6 @@ const MyLists = () => {
                       </div>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm">
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
                 </div>
               </CardHeader>
               
@@ -280,7 +234,7 @@ const MyLists = () => {
                   <Button 
                     size="sm" 
                     className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                    onClick={() => handleAddGoal(list.title)}
+                    onClick={() => handleAddGoal(list.id, list.title)}
                   >
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
@@ -292,21 +246,24 @@ const MyLists = () => {
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    onClick={() => handleEditList(list.id, list.title)}
+                    onClick={() => toast({ title: "Edit List", description: "Edit functionality coming soon!" })}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    onClick={() => handleShareList(list.title)}
+                    onClick={() => {
+                      navigator.clipboard.writeText(`Check out my bucket list: ${list.title}!`);
+                      toast({ title: "Share Link Copied! 🔗", description: `Share link copied to clipboard.` });
+                    }}
                   >
                     <Share2 className="h-4 w-4" />
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    onClick={() => handleDeleteList(list.title)}
+                    onClick={() => handleDeleteList(list.id, list.title)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -323,9 +280,25 @@ const MyLists = () => {
             </Card>
           ))}
         </div>
+
+        {filteredLists.length === 0 && (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">📝</div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No lists found</h3>
+            <p className="text-gray-600 mb-6">
+              {searchQuery ? 'Try adjusting your search terms' : 'Create your first bucket list to get started!'}
+            </p>
+            <Button 
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+              onClick={handleCreateNew}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Create Your First List
+            </Button>
+          </div>
+        )}
       </div>
 
-      {/* Create List Modal */}
       <CreateListModal 
         isOpen={isCreateModalOpen} 
         onClose={() => setIsCreateModalOpen(false)}
