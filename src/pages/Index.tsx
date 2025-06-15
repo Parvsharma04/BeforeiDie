@@ -1,12 +1,32 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from 'react';
+import Header from '../components/Header';
+import LandingPage from '../components/LandingPage';
+import Dashboard from '../components/Dashboard';
+import CreateListModal from '../components/CreateListModal';
 
 const Index = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  // For demo purposes, we'll show the landing page first
+  // In a real app, this would check actual authentication state
+  if (!isAuthenticated) {
+    return (
+      <div onClick={() => setIsAuthenticated(true)} className="cursor-pointer">
+        <LandingPage />
       </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <Dashboard />
+      <CreateListModal 
+        isOpen={isCreateModalOpen} 
+        onClose={() => setIsCreateModalOpen(false)} 
+      />
     </div>
   );
 };
