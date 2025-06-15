@@ -9,7 +9,6 @@ import MyLists from "./pages/MyLists";
 import ListDetail from "./pages/ListDetail";
 import Discovery from "./pages/Discovery";
 import Friends from "./pages/Friends";
-import Progress from "./pages/Progress";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -27,7 +26,6 @@ const App = () => (
           <Route path="/lists/:id" element={<ListDetail />} />
           <Route path="/discover" element={<Discovery />} />
           <Route path="/friends" element={<Friends />} />
-          <Route path="/progress" element={<Progress />} />
           <Route path="/settings" element={<Settings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
