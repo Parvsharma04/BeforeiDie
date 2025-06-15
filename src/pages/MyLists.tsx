@@ -6,10 +6,12 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
+import CreateListModal from '../components/CreateListModal';
 
 const MyLists = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -66,11 +68,16 @@ const MyLists = () => {
 
   const handleCreateNew = () => {
     console.log('Create new list clicked');
+    setIsCreateModalOpen(true);
+  };
+
+  const handleCreateSuccess = (newList: any) => {
+    console.log('New list created:', newList);
+    setIsCreateModalOpen(false);
     toast({
-      title: "Create New List",
-      description: "Opening list creation form...",
+      title: "Success! 🎉",
+      description: `"${newList.name}" has been created successfully!`,
     });
-    // In a real app, this would open a modal or navigate to creation page
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,6 +112,7 @@ const MyLists = () => {
 
   const handleShareList = (listTitle: string) => {
     console.log('Share list:', listTitle);
+    navigator.clipboard.writeText(`Check out my bucket list: ${listTitle}!`);
     toast({
       title: "Share Link Copied! 🔗",
       description: `Share link for "${listTitle}" copied to clipboard.`,
@@ -201,7 +209,6 @@ const MyLists = () => {
           >
             Learning
           </button>
-          {/* Add more filters here */}
         </div>
 
         {/* Lists Grid */}
@@ -226,7 +233,6 @@ const MyLists = () => {
                       </div>
                     </div>
                   </div>
-                  {/* Dropdown menu placeholder */}
                   <Button variant="ghost" size="sm">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
@@ -318,6 +324,13 @@ const MyLists = () => {
           ))}
         </div>
       </div>
+
+      {/* Create List Modal */}
+      <CreateListModal 
+        isOpen={isCreateModalOpen} 
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={handleCreateSuccess}
+      />
     </div>
   );
 };

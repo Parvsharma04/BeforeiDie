@@ -1,29 +1,16 @@
-
 import React, { useState } from 'react';
-import { ArrowLeft, Plus, Users, Camera, Edit, Trash2, Check, Star } from 'lucide-react';
+import { ArrowLeft, Plus, Users, Camera, Edit, Trash2, Check, Star, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
 const ListDetail = () => {
   const [newItem, setNewItem] = useState('');
-
-  const listData = {
-    title: "🌍 World Adventures",
-    description: "Explore amazing destinations around the globe with friends",
-    progress: 65,
-    completed: 13,
-    total: 20,
-    members: [
-      { name: "Alex", avatar: "A", isOwner: true },
-      { name: "Sarah", avatar: "S", isOwner: false },
-      { name: "Mike", avatar: "M", isOwner: false }
-    ]
-  };
-
-  const bucketItems = [
+  const [bucketItems, setBucketItems] = useState([
     {
       id: 1,
       text: "Visit Machu Picchu, Peru",
@@ -58,13 +45,92 @@ const ListDetail = () => {
       addedDate: "2 weeks ago",
       priority: "low"
     }
-  ];
+  ]);
+
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const listData = {
+    title: "🌍 World Adventures",
+    description: "Explore amazing destinations around the globe with friends",
+    progress: Math.round((bucketItems.filter(item => item.completed).length / bucketItems.length) * 100),
+    completed: bucketItems.filter(item => item.completed).length,
+    total: bucketItems.length,
+    members: [
+      { name: "Alex", avatar: "A", isOwner: true },
+      { name: "Sarah", avatar: "S", isOwner: false },
+      { name: "Mike", avatar: "M", isOwner: false }
+    ]
+  };
 
   const handleAddItem = () => {
     if (newItem.trim()) {
-      // Add new item logic here
+      const newBucketItem = {
+        id: Date.now(),
+        text: newItem.trim(),
+        completed: false,
+        addedBy: "You",
+        addedDate: "Just now",
+        priority: "medium"
+      };
+      
+      setBucketItems([newBucketItem, ...bucketItems]);
       setNewItem('');
+      toast({
+        title: "Goal Added! 🎯",
+        description: `"${newItem.trim()}" has been added to your list.`,
+      });
     }
+  };
+
+  const handleToggleComplete = (itemId: number) => {
+    setBucketItems(items => 
+      items.map(item => {
+        if (item.id === itemId) {
+          const updatedItem = {
+            ...item,
+            completed: !item.completed,
+            completedBy: !item.completed ? "You" : undefined,
+            completedDate: !item.completed ? "Just now" : undefined
+          };
+          
+          toast({
+            title: updatedItem.completed ? "Goal Completed! 🎉" : "Goal Reopened",
+            description: updatedItem.completed 
+              ? `Congratulations on completing "${item.text}"!`
+              : `"${item.text}" has been marked as incomplete.`,
+          });
+          
+          return updatedItem;
+        }
+        return item;
+      })
+    );
+  };
+
+  const handleDeleteItem = (itemId: number, itemText: string) => {
+    setBucketItems(items => items.filter(item => item.id !== itemId));
+    toast({
+      title: "Goal Deleted",
+      description: `"${itemText}" has been removed from your list.`,
+      variant: "destructive",
+    });
+  };
+
+  const handleAddPhoto = (itemId: number, itemText: string) => {
+    setBucketItems(items => 
+      items.map(item => 
+        item.id === itemId ? { ...item, photo: true } : item
+      )
+    );
+    toast({
+      title: "Photo Added! 📸",
+      description: `Photo added to "${itemText}".`,
+    });
+  };
+
+  const handleGoBack = () => {
+    navigate('/lists');
   };
 
   return (
@@ -74,7 +140,7 @@ const ListDetail = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex items-center mb-8">
-          <Button variant="ghost" className="mr-4">
+          <Button variant="ghost" className="mr-4" onClick={handleGoBack}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex-1">
@@ -115,6 +181,7 @@ const ListDetail = () => {
                   />
                   <Button 
                     onClick={handleAddItem}
+                    disabled={!newItem.trim()}
                     className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                   >
                     <Plus className="h-4 w-4" />
@@ -131,11 +198,14 @@ const ListDetail = () => {
                 }`}>
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
-                      <button className={`mt-1 h-6 w-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                        item.completed 
-                          ? 'bg-emerald-500 border-emerald-500 text-white' 
-                          : 'border-gray-300 hover:border-purple-500'
-                      }`}>
+                      <button 
+                        onClick={() => handleToggleComplete(item.id)}
+                        className={`mt-1 h-6 w-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+                          item.completed 
+                            ? 'bg-emerald-500 border-emerald-500 text-white' 
+                            : 'border-gray-300 hover:border-purple-500'
+                        }`}
+                      >
                         {item.completed && <Check className="h-3 w-3" />}
                       </button>
                       
@@ -153,10 +223,23 @@ const ListDetail = () => {
                             {item.photo && (
                               <Camera className="h-4 w-4 text-blue-500" />
                             )}
+                            {item.completed && !item.photo && (
+                              <Button 
+                                variant="ghost" 
+                                size="sm"
+                                onClick={() => handleAddPhoto(item.id, item.text)}
+                              >
+                                <Upload className="h-4 w-4" />
+                              </Button>
+                            )}
                             <Button variant="ghost" size="sm">
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="sm">
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => handleDeleteItem(item.id, item.text)}
+                            >
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>

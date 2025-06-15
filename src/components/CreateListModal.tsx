@@ -9,9 +9,10 @@ import { Card, CardContent } from '@/components/ui/card';
 interface CreateListModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: (listData: any) => void;
 }
 
-const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose }) => {
+const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const [step, setStep] = useState(1);
   const [listData, setListData] = useState({
     name: '',
@@ -34,6 +35,47 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose }) =>
     { name: 'Other', icon: '✨', color: 'from-yellow-500 to-orange-500' }
   ];
 
+  const handleCreateList = () => {
+    const newList = {
+      id: Date.now(),
+      name: listData.name,
+      description: listData.description,
+      category: listData.category,
+      privacy: listData.privacy,
+      createdAt: new Date().toISOString(),
+      items: [],
+      collaborators: listData.collaborators
+    };
+
+    console.log('Creating new list:', newList);
+    
+    if (onSuccess) {
+      onSuccess(newList);
+    }
+
+    // Reset form
+    setListData({
+      name: '',
+      description: '',
+      category: '',
+      privacy: 'private',
+      collaborators: []
+    });
+    setStep(1);
+  };
+
+  const handleClose = () => {
+    setListData({
+      name: '',
+      description: '',
+      category: '',
+      privacy: 'private',
+      collaborators: []
+    });
+    setStep(1);
+    onClose();
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <Card className="w-full max-w-2xl bg-white shadow-2xl">
@@ -41,7 +83,7 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose }) =>
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b">
             <h2 className="text-2xl font-bold text-gray-900">Create New Bucket List</h2>
-            <Button variant="ghost" size="sm" onClick={onClose}>
+            <Button variant="ghost" size="sm" onClick={handleClose}>
               <X className="h-5 w-5" />
             </Button>
           </div>
@@ -219,7 +261,10 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose }) =>
                   <Button variant="outline" onClick={() => setStep(2)}>
                     Back
                   </Button>
-                  <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                  <Button 
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                    onClick={handleCreateList}
+                  >
                     Create Bucket List
                   </Button>
                 </div>
