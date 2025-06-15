@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Filter, TrendingUp, Shuffle, Heart, Users, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -146,7 +145,7 @@ const Discovery = () => {
   };
 
   const handleLike = (goalId: number) => {
-    setIns inspirationState(prev => 
+    setInspirationState(prev => 
       prev.map(goal => 
         goal.id === goalId 
           ? { 
