@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft, Plus, Users, Camera, Edit, Trash2, Check, Star, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,10 +8,11 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
+import { BucketListItem } from '../types/bucketList';
 
 const ListDetail = () => {
   const [newItem, setNewItem] = useState('');
-  const [bucketItems, setBucketItems] = useState([
+  const [bucketItems, setBucketItems] = useState<BucketListItem[]>([
     {
       id: 1,
       text: "Visit Machu Picchu, Peru",
@@ -18,7 +20,9 @@ const ListDetail = () => {
       completedBy: "Sarah",
       completedDate: "2 days ago",
       photo: true,
-      priority: "high"
+      priority: "high",
+      addedBy: "Sarah",
+      addedDate: "1 month ago"
     },
     {
       id: 2,
@@ -26,7 +30,8 @@ const ListDetail = () => {
       completed: false,
       addedBy: "Mike",
       addedDate: "1 week ago",
-      priority: "high"
+      priority: "high",
+      photo: false
     },
     {
       id: 3,
@@ -35,7 +40,9 @@ const ListDetail = () => {
       completedBy: "Alex",
       completedDate: "3 months ago",
       photo: true,
-      priority: "medium"
+      priority: "medium",
+      addedBy: "Alex",
+      addedDate: "6 months ago"
     },
     {
       id: 4,
@@ -43,7 +50,8 @@ const ListDetail = () => {
       completed: false,
       addedBy: "Sarah",
       addedDate: "2 weeks ago",
-      priority: "low"
+      priority: "low",
+      photo: false
     }
   ]);
 
@@ -65,13 +73,14 @@ const ListDetail = () => {
 
   const handleAddItem = () => {
     if (newItem.trim()) {
-      const newBucketItem = {
+      const newBucketItem: BucketListItem = {
         id: Date.now(),
         text: newItem.trim(),
         completed: false,
         addedBy: "You",
         addedDate: "Just now",
-        priority: "medium"
+        priority: "medium",
+        photo: false
       };
       
       setBucketItems([newBucketItem, ...bucketItems]);
@@ -87,7 +96,7 @@ const ListDetail = () => {
     setBucketItems(items => 
       items.map(item => {
         if (item.id === itemId) {
-          const updatedItem = {
+          const updatedItem: BucketListItem = {
             ...item,
             completed: !item.completed,
             completedBy: !item.completed ? "You" : undefined,
@@ -246,7 +255,7 @@ const ListDetail = () => {
                         </div>
                         
                         <div className="text-sm text-gray-500">
-                          {item.completed ? (
+                          {item.completed && item.completedBy ? (
                             <span>Completed by <strong>{item.completedBy}</strong> {item.completedDate}</span>
                           ) : (
                             <span>Added by <strong>{item.addedBy}</strong> {item.addedDate}</span>
