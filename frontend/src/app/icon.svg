@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Deep Dark Background for high contrast in browser tabs -->
+  <rect width="512" height="512" fill="#292524" rx="128" />
+  
+  <!-- Monogram -->
+  <text x="256" y="340" font-family="Georgia, 'Times New Roman', serif" font-size="300" font-style="italic" fill="#fafaf9" text-anchor="middle" letter-spacing="-16">
+    bd
+  </text>
+</svg>

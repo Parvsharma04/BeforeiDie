@@ -82,11 +82,11 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased selection:bg-stone-300 selection:text-stone-900;
+    @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary-foreground;
   }
 
   .dark body {
-    @apply selection:bg-stone-700 selection:text-stone-100;
+    @apply selection:bg-primary/20 selection:text-primary-foreground;
   }
 }
 
@@ -106,5 +106,17 @@
 
   .page-transition {
     @apply animate-fade-in;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari and Opera */
   }
 }

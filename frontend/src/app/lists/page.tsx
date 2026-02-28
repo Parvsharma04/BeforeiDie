@@ -46,19 +46,19 @@ export default function MyListsPage() {
     if (!mounted) return null;
 
     return (
-        <div className="min-h-screen bg-stone-50 text-stone-800 font-sans selection:bg-stone-200 fade-in">
+        <div className="min-h-screen bg-background text-foreground font-sans selection:bg-stone-300 dark:selection:bg-stone-700 selection:text-stone-900 dark:selection:text-stone-100 fade-in">
             <Header />
 
             <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-4xl">
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 border-b border-stone-200 pb-8">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 border-b border-border pb-8">
                     <div>
-                        <h1 className="text-4xl lg:text-5xl font-serif font-light text-stone-900 mb-3 tracking-tight">Your Journals</h1>
-                        <p className="text-stone-500 font-light text-lg">A quiet collection of your dreams and aspirations.</p>
+                        <h1 className="text-4xl lg:text-5xl font-serif font-light text-foreground mb-3 tracking-tight">Your Journals</h1>
+                        <p className="text-muted-foreground font-light text-lg">A quiet collection of your dreams and aspirations.</p>
                     </div>
                     <Button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="bg-stone-800 hover:bg-stone-900 text-stone-50 shrink-0"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground shrink-0 shadow-sm transition-transform hover:scale-105"
                     >
                         <Plus className="h-4 w-4 mr-2" /> Start a new journal
                     </Button>
@@ -66,18 +66,18 @@ export default function MyListsPage() {
 
                 {/* Minimal Search */}
                 <div className="relative mb-12 max-w-md">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400 h-4 w-4" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                     <Input
                         placeholder="Search your collections..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 bg-transparent border-t-0 border-x-0 border-b border-stone-300 rounded-none shadow-none focus-visible:ring-0 focus-visible:border-stone-800 text-stone-800 placeholder:text-stone-400 pb-2 px-0"
+                        className="pl-10 bg-transparent border-t-0 border-x-0 border-b border-border rounded-none shadow-none focus-visible:ring-0 focus-visible:border-foreground text-foreground placeholder-muted-foreground pb-2 px-0"
                     />
                 </div>
 
                 {isLoading ? (
                     <div className="flex justify-center py-20">
-                        <Loader2 className="w-8 h-8 text-stone-400 animate-spin" />
+                        <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
                     </div>
                 ) : (
                     <>
@@ -87,51 +87,51 @@ export default function MyListsPage() {
                                 <div
                                     key={list.id}
                                     onClick={() => router.push(`/lists/${list.id}`)}
-                                    className="group flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white border border-stone-100 rounded-2xl hover:border-stone-300 hover:shadow-sm transition-all duration-300 cursor-pointer"
+                                    className="group flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-card border border-border rounded-2xl hover:border-foreground/20 hover:shadow-md transition-all duration-300 cursor-pointer"
                                 >
                                     <div className="flex items-center gap-5 mb-4 sm:mb-0">
-                                        <div className="w-12 h-12 bg-stone-50 rounded-full flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">
+                                        <div className="w-12 h-12 bg-secondary text-secondary-foreground rounded-full flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">
                                             {list.emoji}
                                         </div>
                                         <div>
-                                            <h3 className="font-serif text-lg text-stone-900 mb-1">{list.title}</h3>
-                                            <div className="hidden sm:flex items-center gap-3 text-sm text-stone-500 font-light">
+                                            <h3 className="font-serif text-lg text-card-foreground mb-1 group-hover:text-primary transition-colors">{list.title}</h3>
+                                            <div className="hidden sm:flex items-center gap-3 text-sm text-muted-foreground font-light">
                                                 <span>{list.category || "General"}</span>
-                                                <span className="w-1 h-1 rounded-full bg-stone-300" />
+                                                <span className="w-1 h-1 rounded-full bg-border" />
                                                 <span>Updated {formatDistanceToNow(new Date(list.updatedAt), { addSuffix: true })}</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-4 shrink-0 sm:pl-6 sm:border-l border-stone-100">
+                                    <div className="flex items-center gap-4 shrink-0 sm:pl-6 sm:border-l border-border">
                                         <div className="flex flex-col items-end gap-1 w-24">
-                                            <div className="flex justify-between w-full text-xs text-stone-500 font-medium">
+                                            <div className="flex justify-between w-full text-xs text-muted-foreground font-medium">
                                                 <span>{list.completed}/{list.total}</span>
                                                 <span>{list.total > 0 ? Math.round((list.completed / list.total) * 100) : 0}%</span>
                                             </div>
-                                            <div className="h-1 w-full bg-stone-100 rounded-full overflow-hidden">
+                                            <div className="h-1 w-full bg-secondary rounded-full overflow-hidden">
                                                 <div
-                                                    className="h-full bg-stone-400 transition-all duration-1000"
+                                                    className="h-full bg-primary/40 transition-all duration-1000"
                                                     style={{ width: `${list.total > 0 ? (list.completed / list.total) * 100 : 0}%` }}
                                                 />
                                             </div>
                                         </div>
-                                        <BookOpen className="w-5 h-5 text-stone-300 group-hover:text-stone-600 transition-colors hidden sm:block" />
+                                        <BookOpen className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-foreground transition-all hidden sm:block" />
                                     </div>
                                 </div>
                             ))}
                         </div>
 
                         {filteredLists.length === 0 && (
-                            <div className="text-center py-20 bg-stone-50 rounded-2xl border border-dashed border-stone-200">
-                                <BookOpen className="w-12 h-12 text-stone-300 mx-auto mb-4" />
-                                <h3 className="text-lg font-serif text-stone-900 mb-2">No journals found</h3>
-                                <p className="text-stone-500 font-light mb-6">
+                            <div className="text-center py-20 bg-card rounded-2xl border border-dashed border-border slide-up">
+                                <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+                                <h3 className="text-lg font-serif text-foreground mb-2">No journals found</h3>
+                                <p className="text-muted-foreground font-light mb-6">
                                     {searchQuery ? "Try adjusting your search." : "Ready to write down your first aspirations?"}
                                 </p>
                                 <Button
                                     variant="outline"
-                                    className="border-stone-300 text-stone-700 hover:bg-stone-100"
+                                    className="border-border text-foreground hover:bg-muted"
                                     onClick={() => setIsCreateModalOpen(true)}
                                 >
                                     <Plus className="h-4 w-4 mr-2" /> Start a journal
