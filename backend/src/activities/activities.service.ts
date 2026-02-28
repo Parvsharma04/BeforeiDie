@@ -18,4 +18,23 @@ export class ActivitiesService {
         ]);
         return { activities, total, limit, offset };
     }
+
+    async createThought(userId: string, text: string) {
+        return this.prisma.activity.create({
+            data: {
+                userId,
+                type: 'thought',
+                message: text,
+            }
+        });
+    }
+
+    async deleteActivity(userId: string, id: string) {
+        // Find first to ensure ownership
+        const activity = await this.prisma.activity.findUnique({ where: { id } });
+        if (!activity || activity.userId !== userId) {
+            throw new Error('Activity not found or unauthorized');
+        }
+        return this.prisma.activity.delete({ where: { id } });
+    }
 }

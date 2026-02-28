@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Delete, Param, UseGuards } from '@nestjs/common';
 import { ActivitiesService } from './activities.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
@@ -19,5 +19,21 @@ export class ActivitiesController {
             limit ? parseInt(limit) : 20,
             offset ? parseInt(offset) : 0,
         );
+    }
+
+    @Post('thought')
+    createThought(
+        @CurrentUser() user: { userId: string },
+        @Body() dto: { text: string }
+    ) {
+        return this.activitiesService.createThought(user.userId, dto.text);
+    }
+
+    @Delete(':id')
+    deleteActivity(
+        @CurrentUser() user: { userId: string },
+        @Param('id') id: string
+    ) {
+        return this.activitiesService.deleteActivity(user.userId, id);
     }
 }
