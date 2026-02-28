@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  bio       String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lists      List[]
+  activities Activity[]
+}
+
+model List {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  emoji       String   @default("📝")
+  category    String   @default("general")
+  visibility  String   @default("private") // private, friends, public
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  items      ListItem[]
+  activities Activity[]
+}
+
+model ListItem {
+  id            String    @id @default(cuid())
+  text          String
+  completed     Boolean   @default(false)
+  completedAt   DateTime?
+  completedBy   String?
+  priority      String    @default("medium") // low, medium, high
+  photo         Boolean   @default(false)
+  notes         String?
+  order         Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  listId String
+  list   List   @relation(fields: [listId], references: [id], onDelete: Cascade)
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  type      String   // created_list, added_item, completed_item, uploaded_photo
+  message   String
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  listId String?
+  list   List?   @relation(fields: [listId], references: [id], onDelete: SetNull)
+}

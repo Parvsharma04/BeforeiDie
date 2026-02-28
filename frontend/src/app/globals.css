@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Warm stone background */
+    --background: 60 5% 96%;
+    /* #f5f5f4 */
+    --foreground: 20 14% 15%;
+    /* dark brown/grey */
+
+    /* Pure white cards */
+    --card: 0 0% 100%;
+    --card-foreground: 20 14% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14% 15%;
+
+    /* Soft earthy primary */
+    --primary: 24 10% 25%;
+    --primary-foreground: 60 5% 96%;
+
+    /* Subtle secondary */
+    --secondary: 40 10% 90%;
+    --secondary-foreground: 24 10% 25%;
+
+    /* Very soft muted */
+    --muted: 40 10% 92%;
+    --muted-foreground: 25 5% 45%;
+
+    --accent: 40 10% 90%;
+    --accent-foreground: 24 10% 25%;
+
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 60 5% 96%;
+
+    /* Soft borders */
+    --border: 40 10% 85%;
+    --input: 40 10% 85%;
+    --ring: 24 10% 25%;
+
+    --radius: 0.75rem;
+    /* Softer, rounder corners */
+  }
+
+  .dark {
+    /* Deep warm brown/charcoal */
+    --background: 20 10% 10%;
+    --foreground: 60 5% 90%;
+
+    --card: 20 8% 14%;
+    --card-foreground: 60 5% 90%;
+
+    --popover: 20 8% 14%;
+    --popover-foreground: 60 5% 90%;
+
+    --primary: 60 5% 90%;
+    --primary-foreground: 20 10% 10%;
+
+    --secondary: 20 8% 20%;
+    --secondary-foreground: 60 5% 90%;
+
+    --muted: 20 8% 20%;
+    --muted-foreground: 30 5% 60%;
+
+    --accent: 20 8% 20%;
+    --accent-foreground: 60 5% 90%;
+
+    --destructive: 0 50% 40%;
+    --destructive-foreground: 60 5% 90%;
+
+    --border: 20 8% 20%;
+    --input: 20 8% 20%;
+    --ring: 60 5% 90%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-stone-300 selection:text-stone-900;
+  }
+
+  .dark body {
+    @apply selection:bg-stone-700 selection:text-stone-100;
+  }
+}
+
+/* Custom utility classes based on product.md */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .ui-relaxed {
+    @apply leading-relaxed tracking-wide;
+  }
+
+  .card-premium {
+    @apply bg-card border border-border/50 shadow-sm transition-all duration-500 hover:shadow-md hover:border-border;
+  }
+
+  .page-transition {
+    @apply animate-fade-in;
+  }
+}
